@@ -136,13 +136,13 @@ void fillSparseMatrix(SparseMatrix **matrix, int line, int column, int element) 
 	BOOL insert = FALSE;
 
 	e = createElement(line, column, element);
-	printf("Matrix->Row [%d] Matrix->Col [%d]\n", (*matrix)->row, (*matrix)->column);
-	printf("line [%d] column [%d]\n", line, column);
+	//printf("Matrix->Row [%d] Matrix->Col [%d]\n", (*matrix)->row, (*matrix)->column);
+	//printf("line [%d] column [%d]\n", line, column);
 
 	if(line > (*matrix)->row || column > (*matrix)->column) return;
 
 	//Insert on line
-	printf("fillSparseMatrix:: Insert on line\n");
+	//printf("fillSparseMatrix:: Insert on line\n");
 	if((*matrix)->line[line] == NULL) {
 		(*matrix)->line[line] = e;
 
@@ -170,7 +170,7 @@ void fillSparseMatrix(SparseMatrix **matrix, int line, int column, int element) 
 	insert = FALSE;
 
 	//Insert on column
-	printf("fillSparseMatrix:: Insert on column\n");
+	//printf("fillSparseMatrix:: Insert on column\n");
 	if((*matrix)->col[column] == NULL) {
 		(*matrix)->col[column] = e;
 	}
@@ -202,6 +202,7 @@ void freeSparseMatrix(SparseMatrix *matrix) {
 
 SparseMatrix *convertInMatrixToSparseMatrix(int **m, int r, int c) {
 	SparseMatrix *matrix = NULL;
+	int i = 0, j = 0;
 
 	matrix = createSparseMatrix(r, c);
 
@@ -224,18 +225,27 @@ SparseMatrix *multiplyMatrices(SparseMatrix *first, SparseMatrix *second) {
 	SparseMatrix *matrix = NULL;
 	int i, j, k;
 
+	printf("multiplyMatrices::ENTER\n");
+
 	result = (int **)malloc(sizeof(int*) * first->row);
 	for(i=0; i<first->row; i++) result[i] = (int*)calloc(second->column, sizeof(int));
 
+	printf("multiplyMatrices::first->column[%d] second->row[%d]\n", first->column, second->row);
+
 	if(first->column != second->row) return;
 
+	printf("multiplyMatrices::FIRST\n");
 	firstM = getIntMatrix(first);
+	printIntMatrix(firstM, first->row, first->column);
+
+	printf("multiplyMatrices::SECOND\n");
 	secondM = getIntMatrix(second);
+	printIntMatrix(secondM, second->row, second->column);
 
 	for(i=0; i<first->row; i++) {
 		for(j=0; j<second->column; j++) {
 			for(k=0; k<first->column; k++) {
-				result[i][j] += first[i][k] * second[k][j];
+				result[i][j] += firstM[i][k] * secondM[k][j];
 			}
 		}
 
@@ -266,7 +276,7 @@ SparseMatrix *addMatrices(SparseMatrix *first, SparseMatrix *second) {
 	for(i=0; i<first->row; i++) {
 		for(j=0; j<second->column; j++) {
 			for(k=0; k<first->column; k++) {
-				result[i][j] += first[i][j] + second[i][j];
+				result[i][j] += firstM[i][j] + secondM[i][j];
 			}
 		}
 
@@ -312,10 +322,12 @@ int main() {
 
 
 	if(op == 'A') {
-
+		printf("ADD MATRICES\n");
+		addMatrices(first, second);
 	}
 	else if(op == 'M') {
-
+		printf("MULTIPLY MATRICES\n");
+		multiplyMatrices(first, second);
 	}
 	
 	return 0;
